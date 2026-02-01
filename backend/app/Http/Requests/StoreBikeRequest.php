@@ -24,11 +24,11 @@ class StoreBikeRequest extends FormRequest
         return [
             "manufacturer" => ["required","string","max:30"],
             "model" => ["required","string","max:15"],
-            "license_plate" => ["required","string","max:9"],
+            "license_plate" => ["required","string","max:9", "regex:/^[A-Z]{2}-[A-Z]{2}-\d{3}$/"],
             "color" => ["required","string","max:30"],
             "horsepower" => ["required","integer"],
             "consumption" => ["nullable", "numeric", "min:0"],
-            "year" => ["required",],
+            "year" => ["required", "integer", "digits:4", "between:1900,2026"],
             "owner_id" => ["required", "integer", "exists:owners,id"],
         ];
     }
