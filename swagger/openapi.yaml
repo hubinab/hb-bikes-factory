@@ -344,6 +344,8 @@ components:
         consumption:
           type: number
           nullable: true
+        year: 
+          type: string
         owner_id:
           type: integer
         owner:
@@ -367,7 +369,7 @@ components:
           type: number
           nullable: true
         year: 
-          type: year
+          type: string
         owner_id:
           type: integer
       required: [manufacturer, model, license_plate, color, horsepower, year, owner_id]
