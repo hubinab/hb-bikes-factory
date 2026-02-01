@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Bike extends Model
 {
+    // copilot ez kell a factory mukodesehez
     use HasFactory;
 
     public $timestamps = false;
