@@ -11,7 +11,7 @@ class UpdateOwnerRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdateOwnerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "name" => ["required", "string", "max:50"],
+            "country" => ["required", "string", "max:100"],
+            "sex" => ["required", "string", "max:6"],
         ];
     }
 }

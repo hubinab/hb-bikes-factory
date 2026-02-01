@@ -22,9 +22,11 @@ class OwnerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreOwnerRequest $request)
+    public function store(StoreOwnerRequest $request): JsonResource
     {
-        //
+        $data = $request->validated();
+        $owner = Owner::create($data);
+        return new OwnerResource($owner->load('bikes'));
     }
 
     /**
@@ -40,7 +42,9 @@ class OwnerController extends Controller
      */
     public function update(UpdateOwnerRequest $request, Owner $owner)
     {
-        //
+        $data = $request->validated();
+        $owner->update($data);
+        return new OwnerResource($owner->load('bikes'));
     }
 
     /**

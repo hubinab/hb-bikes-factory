@@ -119,7 +119,7 @@ paths:
         A módosított rekordot adja is vissza a minta szerint!
       operationId: bikes.update
       parameters:
-        - name: bikes
+        - name: bike
           in: path
           required: true
           schema:

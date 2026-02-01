@@ -22,9 +22,11 @@ class BikeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreBikeRequest $request)
+    public function store(StoreBikeRequest $request): JsonResource
     {
-        //
+        $data = $request->validated();
+        $bike = Bike::create($data);
+        return new BikeResource($bike->load('owner'));
     }
 
     /**
@@ -40,7 +42,9 @@ class BikeController extends Controller
      */
     public function update(UpdateBikeRequest $request, Bike $bike)
     {
-        //
+        $data = $request->validated();
+        $bike->update($data);
+        return new BikeResource($bike->load('owner'));
     }
 
     /**

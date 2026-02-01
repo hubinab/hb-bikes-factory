@@ -9,6 +9,17 @@ class Bike extends Model
 {
     public $timestamps = false;
 
+    protected $fillable = [
+        "manufacturer",
+        "model",
+        "license_plate",
+        "color",
+        "horsepower",
+        "consumption",
+        "year",
+        "owner_id",
+    ];
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(Owner::class);

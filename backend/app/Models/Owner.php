@@ -9,6 +9,12 @@ class Owner extends Model
 {
     public $timestamps = false;
 
+    protected $fillable = [
+        "name",
+        "country",
+        "sex",
+    ];
+
     public function bikes():HasMany
     {
         return $this->hasMany(Bike::class);
