@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Bike;
+use App\Models\Owner;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -22,5 +24,10 @@ class DatabaseSeeder extends Seeder
 
         $this->call(OwnerSeeder::class);
         $this->call(BikeSeeder::class);
+
+        // copilot ---->
+        Owner::factory(15)->create();
+        Bike::factory(30)->create();
+        // <---- copilot
     }
 }
