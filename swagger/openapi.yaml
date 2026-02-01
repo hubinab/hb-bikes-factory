@@ -65,7 +65,15 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/BikeRequest'
-            example: {"manufacturer": "Honda", "model": "City", "license_plate": "AH-HJ-878", "color": "Blue", "horsepower": "56", "consumption": "8.21","year": "1999", "owner":1 }
+            example: 
+              "manufacturer": "Honda"
+              "model": "City"
+              "license_plate": "AH-HJ-878"
+              "color": "Blue"
+              "horsepower": "56"
+              "consumption": "8.21"
+              "year": "1999"
+              "owner_id": 1 
       responses:
         '201':
           description: Motor létrehozva
@@ -131,7 +139,15 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/BikeRequest'
-            example: {"data":{"id":7,"manufacturer":"Honda","model":"City","license_plate":"AH-HJ-878","color":"Blue","horsepower":56,"consumption":8.21,"year":"1999","owner":{"id":1,"name":"River Gerhold DVM","country":"Iraq","sex":"female"}}}
+            example: 
+              "manufacturer": "Honda"
+              "model": "City"
+              "license_plate": "AH-HJ-878"
+              "color": "Blue"
+              "horsepower": 56
+              "consumption": 8.21
+              "year": "1999"
+              "owner_id": 1
       responses:
         '200':
           description: Motor frissítve
@@ -310,35 +326,6 @@ paths:
 
 components:
   schemas:
-    OwnerRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        country:
-          type: string
-        sex:
-          type: string
-      required: [name, country, sex]
-
-    BikeRequest:
-      type: object
-      properties:
-        manufacturer:
-          type: string
-        model:
-          type: string
-        license_plate:
-          type: string
-        color:
-          type: string
-        horsepower:
-          type: integer
-        consumption:
-          type: number
-        owner_id:
-          type: number
-      required: [manufacturer, model, license_plate, color, horsepower, consumption, owner_id]
     BikeResource:
       type: object
       properties:
@@ -356,9 +343,34 @@ components:
           type: integer
         consumption:
           type: number
+          nullable: true
+        owner_id:
+          type: integer
         owner:
-          items:
-            $ref: '#/components/schemas/OwnerResource'
+          $ref: '#/components/schemas/OwnerResource'
+          nullable: true
+
+    BikeRequest:
+      type: object
+      properties:
+        manufacturer:
+          type: string
+        model:
+          type: string
+        license_plate:
+          type: string
+        color:
+          type: string
+        horsepower:
+          type: integer
+        consumption:
+          type: number
+          nullable: true
+        year: 
+          type: year
+        owner_id:
+          type: integer
+      required: [manufacturer, model, license_plate, color, horsepower, year, owner_id]
 
     OwnerResource:
       type: object
@@ -375,3 +387,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BikeResource'
+          nullable: true
+
+    OwnerRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        country:
+          type: string
+        sex:
+          type: string
+      required: [name, country, sex]
