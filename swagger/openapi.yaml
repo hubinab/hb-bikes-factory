@@ -1,20 +1,377 @@
-openapi: 3.0.1
+openapi: "3.1.0"
 info:
-  title: HelloWorld API
+  title: Bikes API
+  description: |
+    A **Motorok** megjelenítésekor vedd figyelembe, hogy
+
+    - az `id`, `manufacturer`, `model`, `license_plate`, `color`, `horsepower`, `consumption`, `year` és `owner` mezők értékeit jelenítsd meg,
+    - az `owner_id` helyett a márka adatait jelenítsd meg a minta szerint,
+    - a fogyasztás literben értendő.
+
+    A **Tulajok** megjelenítésekor vedd figyelembe, hogy
+
+    - az `id`, `name`, `country` és `sex` értékeit jelenítsd meg, ahol a `sex` csak `female`, `male` vagy `other` értéket vehet fel, 
+    - továbbá jelenítsd meg minden tulaj saját motorbiciklijét!
+
   version: 1.0.0
+
+servers:
+  - url: http://backend.vm1.test
+    description: VM1 backend
+  - url: http://backend.vm2.test
+    description: VM2 backend
+  - url: http://backend.vm3.test
+    description: VM3 backend
+  - url: http://backend.vm4.test
+    description: VM4 backend
+  - url: http://backend.vm5.test
+    description: VM5 backend
+  - url: http://backend.vm6.test
+    description: VM6 backend
+
 paths:
-  /hello:
+  /api/bikes:
     get:
-      operationId: hello.world
-      summary: Returns a greeting
+      tags:
+       - Bikes
+      summary: Motorok listájának lekérése
+      description: |
+        Visszaadja az összes motor adatát a minta szerint
+      operationId: bikes.index
       responses:
         '200':
-          description: A friendly greeting
+          description: Motorok listája
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
-                    example: Hello, world!
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BikeResource'
+              example: {"data":[{"id":1,"manufacturer":"Ducati","model":"Libero","license_plate":"JG-GY-636","color":"Linen","horsepower":55,"consumption":7.56,"year":"1977","owner":{"id":3,"name":"Lora Bechtelar","country":"Costa Rica","sex":"female"}},{"id":2,"manufacturer":"Kawasaki","model":"Optio","license_plate":"TF-VP-104","color":"LightSalmon","horsepower":97,"consumption":1.41,"year":"1971","owner":{"id":1,"name":"River Gerhold DVM","country":"Iraq","sex":"female"}},{"id":3,"manufacturer":"Ducati","model":"Natus","license_plate":"UE-XN-852","color":"Darkorange","horsepower":45,"consumption":9.04,"year":"1993","owner":{"id":3,"name":"Lora Bechtelar","country":"Costa Rica","sex":"female"}},{"id":4,"manufacturer":"BMW","model":"Est","license_plate":"DZ-YW-705","color":"Pink","horsepower":87,"consumption":6.19,"year":"1990","owner":{"id":2,"name":"Prof. Jennings Heidenreich DVM","country":"Malta","sex":"male"}},{"id":5,"manufacturer":"Suzuki","model":"Voluptate","license_plate":"RD-KB-071","color":"Gainsboro","horsepower":74,"consumption":5.65,"year":"1979","owner":{"id":5,"name":"Lajoska Tyson","country":"Uzbegistan","sex":"other"}},{"id":6,"manufacturer":"Honda","model":"City","license_plate":"AH-HJ-878","color":"Blue","horsepower":56,"consumption":8.21,"year":"1999","owner":{"id":1,"name":"River Gerhold DVM","country":"Iraq","sex":"female"}}]}
+    post:
+      tags:
+       - Bikes
+      summary: Új motor létrehozása
+      description: |
+        Hozzon létre egy új motor rekordot a kapott JSON alapján.
+        Sikeres mentés után adja vissza a létrehozott rekordot a minta szerint.
+      operationId: bikes.store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BikeRequest'
+            example: {"manufacturer": "Honda", "model": "City", "license_plate": "AH-HJ-878", "color": "Blue", "horsepower": "56", "consumption": "8.21","year": "1999", "owner":1 }
+      responses:
+        '201':
+          description: Motor létrehozva
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/BikeResource'
+              example: {"data":{"id":7,"manufacturer":"Honda","model":"City","license_plate":"AH-HJ-878","color":"Blue","horsepower":56,"consumption":8.21,"year":"1999","owner":{"id":1,"name":"River Gerhold DVM","country":"Iraq","sex":"female"}}}
+        '422':
+          description: Hibás adatok
+        '500':
+          description: Szerver hiba
+  /api/bikes/{bike}:
+    get:
+      tags:
+       - Bikes
+      summary: Egy adott motor lekérése
+      description: |
+        A motor azonosítója alapján keresse meg a megfelelő rekordot, és adja vissza az adatokat a minta szerint
+      operationId: bikes.show
+      parameters:
+        - name: bike
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 4
+      responses:
+        '200':
+          description: Egy adott motor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/BikeResource'
+              example:  {"data":{"id":1,"manufacturer":"Ducati","model":"Libero","license_plate":"JG-GY-636","color":"Linen","horsepower":55,"consumption":7.56,"year":"1977","owner":{"id":3,"name":"Lora Bechtelar","country":"Costa Rica","sex":"female"}}}
+    put:
+      tags:
+       - Bikes
+      summary: Egy adott motor frissítése
+      description: |
+
+        A feladata, hogy a JSON-ként kapott adatokat validálja,
+        majd teljes egészében cserélje le az adatbázisban található adatokat.
+        
+        A módosított rekordot adja is vissza a minta szerint!
+      operationId: bikes.update
+      parameters:
+        - name: bikes
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BikeRequest'
+            example: {"data":{"id":7,"manufacturer":"Honda","model":"City","license_plate":"AH-HJ-878","color":"Blue","horsepower":56,"consumption":8.21,"year":"1999","owner":{"id":1,"name":"River Gerhold DVM","country":"Iraq","sex":"female"}}}
+      responses:
+        '200':
+          description: Motor frissítve
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/BikeResource'
+              example:  {"data":{"id":7,"manufacturer":"Honda","model":"CB650R","license_plate":"AH-HJ-878","color":"Blue","horsepower":56,"consumption":9.76,"year":"2022","owner":{"id":1,"name":"River Gerhold DVM","country":"Iraq","sex":"female"}}}
+    delete:  
+      tags:
+       - Bikes
+      summary: Egy adott motor törlése
+      description: |
+        Törölje ki a megfelelő rekordot az adatbázisból a kapott azonosító alapján.
+      operationId: bikes.destroy
+      parameters:
+        - name: bike
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 2
+      responses:
+        '204':
+          description: Elem törölve
+        '404':
+          description: Nem található a keresett elem
+        '500':
+          description: Szerver hiba
+  /api/owners:
+    get:
+      tags:
+       - Owners
+      summary: Tulajdonosok listájának lekérése
+      description: |
+        Visszaadja az összes tulajdonos adatát a minta szerint
+      operationId: owners.index
+      responses:
+        '200':
+          description: Tulajdonosok listája
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OwnerResource'
+              example: {"data":[{"id":1,"name":"River Gerhold DVM","country":"Iraq","sex":"female","bike":[{"id":2,"manufacturer":"Kawasaki","model":"Optio","license_plate":"TF-VP-104","color":"LightSalmon","horsepower":97,"consumption":1.41,"year":"1971"},{"id":7,"manufacturer":"Honda","model":"CB650R","license_plate":"AH-HJ-878","color":"Blue","horsepower":56,"consumption":9.76,"year":"2022"}]},{"id":2,"name":"Prof. Jennings Heidenreich DVM","country":"Malta","sex":"male","bike":[{"id":4,"manufacturer":"BMW","model":"Est","license_plate":"DZ-YW-705","color":"Pink","horsepower":87,"consumption":6.19,"year":"1990"}]},{"id":3,"name":"Lora Bechtelar","country":"Costa Rica","sex":"female","bike":[{"id":1,"manufacturer":"Ducati","model":"Libero","license_plate":"JG-GY-636","color":"Linen","horsepower":55,"consumption":7.56,"year":"1977"},{"id":3,"manufacturer":"Ducati","model":"Natus","license_plate":"UE-XN-852","color":"Darkorange","horsepower":45,"consumption":9.04,"year":"1993"}]},{"id":4,"name":"Sylvia Feest","country":"Congo","sex":"female","bike":[]},{"id":5,"name":"Lajoska Tyson","country":"Uzbegistan","sex":"other","bike":[{"id":5,"manufacturer":"Suzuki","model":"Voluptate","license_plate":"RD-KB-071","color":"Gainsboro","horsepower":74,"consumption":5.65,"year":"1979"}]}]}
+    post:
+      tags:
+       - Owners
+      summary: Új tulajdonos létrehozása
+      description: |
+        Hozzon létre egy új tulajdonos rekordot a kapott JSON alapján.
+        Sikeres mentés után adja vissza a létrehozott rekordot a minta szerint.
+      operationId: owners.store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnerRequest'
+            example: {"name":"John Pork", "country": "Afghanistan", "sex":"male"}
+      responses:
+        '201':
+          description: Tulajdonos létrehozva
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/OwnerResource'
+              example: { "data": {"id": 8, "name": "John Pork", "country": "Afghanistan", "sex": "male","bike": []}}
+        '422':
+          description: Hibás adatok
+        '500':
+          description: Szerver hiba
+
+  /api/owners/{owner}:
+    get:
+      tags:
+       - Owners
+      summary: Egy adott tulajdonos lekérése
+      description: |
+        A tulajdonos azonosítója alapján keresse meg a megfelelő rekordot, és adja vissza az adatokat a minta szerint
+      operationId: owners.show
+      parameters:
+        - name: owners
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 5
+      responses:
+        '200':
+          description: Egy adott tulajdonos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/OwnerResource'
+              example: {"data":{"id":2,"name":"Prof. Jennings Heidenreich DVM","country":"Malta","sex":"male","bike":[{"id":4,"manufacturer":"BMW","model":"Est","license_plate":"DZ-YW-705","color":"Pink","horsepower":87,"consumption":6.19,"year":"1990"}]}}
+    put:
+      tags:
+       - Owners
+      summary: Egy adott tulajdonos frissítése
+      description: |
+        A JSON-ként kapott adatokat validálja,
+        majd tejes egészében cserélje le az adatbázisban található adatokat.
+        A módosított rekordot adja is vissza a minta szerint!
+      operationId: owners.update
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OwnerRequest'
+            example: {"name":"Doc. Jennings Heidenreich","country":"China", "sex": "male"}
+      responses:
+        '200':
+          description: Tulajdonos frissítve
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/OwnerResource'
+              example: {"data":{"id":2,"name":"Prof. Jennings Heidenreich DVM","country":"Malta","sex":"male","bike":[{"id":4,"manufacturer":"BMW","model":"Est","license_plate":"DZ-YW-705","color":"Pink","horsepower":87,"consumption":6.19,"year":"1990"}]}}
+        '404':
+          description: Nem található a keresett elem
+        '422':
+          description: Hibás adatok
+        '500':
+          description: Szerver hiba
+
+   
+
+    delete:
+      tags:
+       - Owners
+      summary: Egy adott tulajdonos törlése
+      description: |
+        Törölje ki a megfelelő rekordot az adatbázisból a kapott azonosító alapján.
+      operationId: owners.destroy
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '204':
+          description: Elem törölve
+        '404':
+          description: Nem található a keresett elem
+        '500':
+          description: Szerver hiba
+
+
+components:
+  schemas:
+    OwnerRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        country:
+          type: string
+        sex:
+          type: string
+      required: [name, country, sex]
+
+    BikeRequest:
+      type: object
+      properties:
+        manufacturer:
+          type: string
+        model:
+          type: string
+        license_plate:
+          type: string
+        color:
+          type: string
+        horsepower:
+          type: integer
+        consumption:
+          type: number
+        owner_id:
+          type: number
+      required: [manufacturer, model, license_plate, color, horsepower, consumption, owner_id]
+    BikeResource:
+      type: object
+      properties:
+        id:
+          type: integer
+        manufacturer:
+          type: string
+        model:
+          type: string
+        license_plate:
+          type: string
+        color:
+          type: string
+        horsepower:
+          type: integer
+        consumption:
+          type: number
+        owner:
+          items:
+            $ref: '#/components/schemas/OwnerResource'
+
+    OwnerResource:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        country:
+          type: string
+        sex:
+          type: string
+        bikes:
+          type: array
+          items:
+            $ref: '#/components/schemas/BikeResource'
