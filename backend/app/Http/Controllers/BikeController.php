@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateBikeRequest;
 use App\Http\Resources\BikeResource;
 use App\Models\Bike;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Response;
 
 class BikeController extends Controller
 {
@@ -29,9 +30,9 @@ class BikeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Bike $bike)
+    public function show(Bike $bike): JsonResource
     {
-        //
+        return new BikeResource($bike->load('owner'));
     }
 
     /**
@@ -45,8 +46,8 @@ class BikeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Bike $bike)
+    public function destroy(Bike $bike): Response
     {
-        //
+        return $bike->delete() ? response()->noContent() : abort(500);
     }
 }

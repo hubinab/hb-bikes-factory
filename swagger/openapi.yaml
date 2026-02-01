@@ -225,7 +225,7 @@ paths:
         A tulajdonos azonosítója alapján keresse meg a megfelelő rekordot, és adja vissza az adatokat a minta szerint
       operationId: owners.show
       parameters:
-        - name: owners
+        - name: owner
           in: path
           required: true
           schema:

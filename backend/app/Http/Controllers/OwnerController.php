@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateOwnerRequest;
 use App\Http\Resources\OwnerResource;
 use App\Models\Owner;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Response;
 
 class OwnerController extends Controller
 {
@@ -29,9 +30,9 @@ class OwnerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Owner $owner)
+    public function show(Owner $owner): JsonResource
     {
-        //
+        return new OwnerResource($owner->load('bikes'));
     }
 
     /**
@@ -45,8 +46,8 @@ class OwnerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Owner $owner)
+    public function destroy(Owner $owner): Response
     {
-        //
+        return $owner->delete() ? response()->noContent() : abort(500);
     }
 }

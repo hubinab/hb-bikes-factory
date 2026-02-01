@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::apiResource('/owners',OwnerController::class)
     ->whereNumber('owner')
-    ->only(["index"])
+    ->only(["index", "show", "destroy"])
 ;
 
 Route::apiResource('/bikes', BikeController::class)
     ->whereNumber('bike')
-    ->only(["index"])
+    ->only(["index", "show", "destroy"])
 ;
